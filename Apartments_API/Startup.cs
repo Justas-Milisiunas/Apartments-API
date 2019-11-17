@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Apartments_API.Models;
 using Apartments_API.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,11 +29,12 @@ namespace Apartments_API
         {
             // Mysql database configuration
             services.AddDbContext<RepositoryContext>(o => o.UseMySql(Configuration["MysqlConnection:ConnectionString"]));
+//            services.AddDbContext<RepositoryContext>();
             
             // Repository service
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
-            
-            services.AddControllers();
+
+            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

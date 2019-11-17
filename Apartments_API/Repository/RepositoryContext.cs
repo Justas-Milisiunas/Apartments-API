@@ -1,6 +1,5 @@
 ﻿using Apartments_API.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Apartments_API.Repository
 {
@@ -30,12 +29,12 @@ namespace Apartments_API.Repository
         public virtual DbSet<Skundas> Skundas { get; set; }
         public virtual DbSet<Valytojas> Valytojas { get; set; }
 
-        protected void OnConfiguring(DbContextOptionsBuilder optionsBuilder, IConfiguration configuration)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseMySql(configuration["MysqlConnection:ConnectionString"]);
-            }
+//            if (!optionsBuilder.IsConfigured)
+//            {
+//                optionsBuilder.UseMySql("server=localhost;database=apartments;user=root;pwd=;");
+//            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

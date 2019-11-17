@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Apartments_API.DTO;
 
 namespace Apartments_API.Models
 {
@@ -17,5 +18,22 @@ namespace Apartments_API.Models
         public virtual Nuomininkas Nuomininkas { get; set; }
         public virtual Savininkas Savininkas { get; set; }
         public virtual Valytojas Valytojas { get; set; }
+
+        public IsNaudotojas()
+        {
+            
+        }
+
+        public IsNaudotojas(UserCreateDto userCreateDto)
+        {
+            Vardas = userCreateDto.Vardas;
+            Pavarde = userCreateDto.Pavarde;
+            ElPastas = userCreateDto.ElPastas;
+            Slaptazodis = userCreateDto.Slaptazodis;
+
+            Balansas = 0;
+            RegistracijosData = DateTime.UtcNow;
+            PaskutinisPrisijungimas = DateTime.Now;
+        }
     }
 }

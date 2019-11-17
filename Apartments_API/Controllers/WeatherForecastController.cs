@@ -28,9 +28,10 @@ namespace Apartments_API.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<IsNaudotojas> Get()
+        public IsNaudotojas Get()
         {
-            return _repository.IsNaudotojas.FindAll();
+            var temp = _repository.IsNaudotojas.FindAll().ToList();
+            return temp[0];
         }
     }
 }

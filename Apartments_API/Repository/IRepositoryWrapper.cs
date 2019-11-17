@@ -1,10 +1,12 @@
-using Apartments_API.Repository.ModelsRepositories;
+using Apartments_API.Repository.Repositories;
 
 namespace Apartments_API.Repository
 {
+    /// <summary>
+    /// All repositories wrapper for easier dependency injection
+    /// </summary>
     public interface IRepositoryWrapper
     {
-        IButasRepository Butas { get; }
         IIsNaudotojasRepository IsNaudotojas { get; }
 
         void Save();
