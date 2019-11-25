@@ -1,4 +1,3 @@
-
 using Apartments_API.Repository.Repositories;
 
 namespace Apartments_API.Repository
@@ -8,16 +7,24 @@ namespace Apartments_API.Repository
         private RepositoryContext _repositoryContext;
 
         private IIsNaudotojasRepository _isNaudotojas;
+        public IButasRepository _butas;
+
 
         public RepositoryWrapper(RepositoryContext repositoryContext)
         {
             _repositoryContext = repositoryContext;
         }
-        
+
         public IIsNaudotojasRepository IsNaudotojas
         {
             get { return _isNaudotojas ??= new IsNaudotojasRepository(_repositoryContext); }
         }
+
+        public IButasRepository Butas
+        {
+            get { return _butas ??= new ButasRepository(_repositoryContext); }
+        }
+
 
         public void Save()
         {
