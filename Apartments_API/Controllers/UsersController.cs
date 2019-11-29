@@ -51,12 +51,36 @@ namespace Apartments_API.Controllers
                 .FindByCondition(o => o.ElPastas.ToLower().Equals(user.ElPastas.ToLower())).Any();
             if (checkIfExists)
             {
-                return BadRequest("User already exists");
+                return Conflict("User already exists");
             }
 
             // Saves user in db
             var createdUser = _repository.IsNaudotojas.Create(user);
             return Ok(_mapper.Map<IsNaudotojas, UserDto>(createdUser));
+        }
+
+        /// <summary>
+        /// Checks given login information and returns user's data if logged in successfully
+        /// </summary>
+        /// <param name="user">Login data</param>
+        /// <returns>User data if logged in successfully</returns>
+        [HttpPost("login")]
+        public ActionResult<UserDto> Login([FromBody] UserLoginDto user)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid login information");
+            }
+
+            var foundUser = _repository.IsNaudotojas
+                .FindByCondition(o => o.ElPastas.Equals(user.ElPastas) && o.Slaptazodis.Equals(user.Slaptazodis))
+                .FirstOrDefault();
+            if (foundUser == null)
+            {
+                return NotFound("Bad login information");
+            }
+
+            return Ok(_mapper.Map<IsNaudotojas, UserDto>(foundUser));
         }
     }
 }
