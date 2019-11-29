@@ -19,13 +19,7 @@ namespace Apartments_API.Repository
         /// <param name="expression">Filtering expression</param>
         /// <returns>Filtered objects list</returns>
         IEnumerable<T> FindByCondition(Expression<Func<T, bool>> expression);
-        
-        /// <summary>
-        /// Creates a new object in the database
-        /// </summary>
-        /// <param name="entity">New object</param>
-        T Create(T entity);
-        
+
         /// <summary>
         /// Updates selected object
         /// </summary>

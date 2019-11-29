@@ -26,11 +26,6 @@ namespace Apartments_API.Repository.Repositories
             return _repository.Set<Butas>().Where(expression).AsNoTracking();
         }
 
-        public Butas Create(Butas entity)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Update(Butas entity)
         {
             throw new NotImplementedException();
