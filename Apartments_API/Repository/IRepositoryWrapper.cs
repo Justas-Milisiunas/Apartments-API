@@ -8,6 +8,7 @@ namespace Apartments_API.Repository
     public interface IRepositoryWrapper
     {
         IIsNaudotojasRepository IsNaudotojas { get; }
+        IButasRepository Butas { get; }
 
         void Save();
     }

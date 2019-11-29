@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Apartments_API.Repository;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,13 +29,16 @@ namespace Apartments_API
         public void ConfigureServices(IServiceCollection services)
         {
             // Mysql database configuration
-            services.AddDbContext<RepositoryContext>(o => o.UseMySql(Configuration["MysqlConnection:ConnectionString"]));
-//            services.AddDbContext<RepositoryContext>();
-            
+            services.AddDbContext<RepositoryContext>(o =>
+                o.UseMySql(Configuration["MysqlConnection:ConnectionString"]));
+
+            services.AddAutoMapper(typeof(Startup));
+
             // Repository service
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
 
-            services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            services.AddControllers().AddNewtonsoftJson(x =>
+                x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
