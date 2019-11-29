@@ -1,4 +1,5 @@
 ﻿using Apartments_API.Models;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Apartments_API.Repository
@@ -9,11 +10,13 @@ namespace Apartments_API.Repository
         {
         }
 
-        public RepositoryContext(DbContextOptions<RepositoryContext> options)
+        public RepositoryContext(DbContextOptions<RepositoryContext> options, IMapper mapper)
             : base(options)
         {
+            Mapper = mapper;
         }
 
+        public readonly IMapper Mapper;
         public virtual DbSet<Butas> Butas { get; set; }
         public virtual DbSet<ButoBusena> ButoBusena { get; set; }
         public virtual DbSet<ButoLaikotarpioBusena> ButoLaikotarpioBusena { get; set; }
