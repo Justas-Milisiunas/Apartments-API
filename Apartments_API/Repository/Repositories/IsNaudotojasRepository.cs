@@ -47,17 +47,17 @@ namespace Apartments_API.Repository.Repositories
             var role = entity.Role;
             switch (role)
             {
-                // Tenant
-                case 0:
-                    var tenant = new Nuomininkas();
-                    tenant.IdIsNaudotojas = user.IdIsNaudotojas;
-                    _repository.Set<Nuomininkas>().Add(tenant);
-                    break;
                 // Owner
-                case 1:
+                case 0:
                     var owner = new Savininkas();
                     owner.IdIsNaudotojas = user.IdIsNaudotojas;
                     _repository.Set<Savininkas>().Add(owner);
+                    break;
+                // Tenant
+                case 1:
+                    var tenant = new Nuomininkas();
+                    tenant.IdIsNaudotojas = user.IdIsNaudotojas;
+                    _repository.Set<Nuomininkas>().Add(tenant);
                     break;
                 // Worker
                 case 2:

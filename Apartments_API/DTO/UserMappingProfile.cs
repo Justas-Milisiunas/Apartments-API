@@ -14,9 +14,9 @@ namespace Apartments_API.DTO
             CreateMap<Valytojas, WorkerDto>();
             CreateMap<IsNaudotojas, UserDto>()
                 .ForMember(dest => dest.Role, opt => opt.MapFrom(src =>
-                    (src.Nuomininkas != null) ? 0
-                    : (src.Savininkas != null) ? 1
-                    : (src.Valytojas != null) ? 2 : 0));
+                    (src.Nuomininkas != null) ? 1
+                    : (src.Savininkas != null) ? 0
+                    : (src.Valytojas != null) ? 2 : 1));
         }
     }
 }
