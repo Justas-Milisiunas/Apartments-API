@@ -4,6 +4,7 @@ namespace Apartments_API.DTO
 {
     public class UserDto
     {
+        public int IdIsNaudotojas { get; set; }
         public string Vardas { get; set; }
         public string ElPastas { get; set; }
         public string Pavarde { get; set; }
