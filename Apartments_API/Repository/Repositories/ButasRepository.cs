@@ -40,6 +40,11 @@ namespace Apartments_API.Repository.Repositories
             throw new NotImplementedException();
         }
 
+        public bool Delete(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Delete(Butas entity)
         {
             throw new NotImplementedException();
