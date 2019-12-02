@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Apartments_API.DTO;
 
 namespace Apartments_API.Models
 {
