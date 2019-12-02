@@ -5,7 +5,8 @@ namespace Apartments_API.DTO
 {
     public class OwnerDto
     {
-        public virtual ICollection<Butas> Butas { get; set; }
-        public virtual ICollection<Darbas> Darbas { get; set; }
+        public int IdIsNaudotojas { get; set; }
+
+        public virtual UserDto IdIsNaudotojasNavigation { get; set; }
     }
 }

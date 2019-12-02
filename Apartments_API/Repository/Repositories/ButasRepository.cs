@@ -18,7 +18,16 @@ namespace Apartments_API.Repository.Repositories
 
         public IEnumerable<Butas> FindAll()
         {
-            return _repository.Set<Butas>().AsNoTracking();
+            return _repository.Set<Butas>()
+                .Include(o => o.BusenaNavigation)
+                .Include(o => o.FkSavininkasidIsNaudotojasNavigation)
+                .Include(o => o.FkSavininkasidIsNaudotojasNavigation.IdIsNaudotojasNavigation)
+                .Include(o => o.Darbas)
+                .Include(o => o.NuomosLaikotarpis)
+                .Include(o => o.Privalumas)
+                .Include(o => o.Reitingas)
+                .Include(o => o.Skundas)
+                .AsNoTracking();
         }
 
         public IEnumerable<Butas> FindByCondition(Expression<Func<Butas, bool>> expression)

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using Apartments_API.DTO;
 using Apartments_API.Models;
 using Apartments_API.Repository;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Apartments_API.Controllers
@@ -10,10 +12,13 @@ namespace Apartments_API.Controllers
     public class ApartmentsController : Controller
     {
         private readonly IRepositoryWrapper _repository;
+        private readonly IMapper _mapper;
 
-        public ApartmentsController(IRepositoryWrapper repositoryWrapper)
+        public ApartmentsController(IRepositoryWrapper repositoryWrapper,
+            IMapper mapper)
         {
             _repository = repositoryWrapper;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -23,7 +28,14 @@ namespace Apartments_API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Butas>> GetAllApartments()
         {
-            return Ok(_repository.Butas.FindAll());
+            var apartments = _repository.Butas.FindAll();
+            var mappedApartments = new List<ApartmentDto>();
+            foreach (var apartment in apartments)
+            {
+                mappedApartments.Add(_mapper.Map<Butas, ApartmentDto>(apartment));
+            }
+
+            return Ok(mappedApartments);
         }
 
         /// <summary>
