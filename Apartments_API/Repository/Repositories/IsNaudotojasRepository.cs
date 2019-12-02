@@ -71,12 +71,23 @@ namespace Apartments_API.Repository.Repositories
             return user;
         }
 
-        public void Update(IsNaudotojas entity)
+        public bool Delete(int id)
         {
-            throw new NotImplementedException();
-        }
+            var userExists = _repository.Set<IsNaudotojas>().Where(o => o.IdIsNaudotojas.Equals(id)).Any();
+            if (!userExists)
+            {
+                return false;
+            }
+            _repository.Set<IsNaudotojas>().Remove(new IsNaudotojas
+            {
+                IdIsNaudotojas = id
+            });
+            _repository.SaveChanges();
 
-        public void Delete(IsNaudotojas entity)
+            return true;
+        }
+        
+        public void Update(IsNaudotojas entity)
         {
             throw new NotImplementedException();
         }

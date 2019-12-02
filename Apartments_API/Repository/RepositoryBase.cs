@@ -35,9 +35,9 @@ namespace Apartments_API.Repository
             RepositoryContext.Set<T>().Update(entity);
         }
 
-        public void Delete(T entity)
+        public bool Delete(int id)
         {
-            RepositoryContext.Set<T>().Remove(entity);
+            throw new NotImplementedException();
         }
     }
 }

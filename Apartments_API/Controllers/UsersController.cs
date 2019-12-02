@@ -82,5 +82,22 @@ namespace Apartments_API.Controllers
 
             return Ok(_mapper.Map<IsNaudotojas, UserDto>(foundUser));
         }
+
+        /// <summary>
+        /// Deletes user by given id
+        /// </summary>
+        /// <param name="id">User's id</param>
+        /// <returns>Ok if deleted successfully</returns>
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var deleted = _repository.IsNaudotojas.Delete(id);
+            if (!deleted)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
     }
 }
