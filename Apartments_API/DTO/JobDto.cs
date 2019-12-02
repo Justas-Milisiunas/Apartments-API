@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 
-namespace Apartments_API.Models
+namespace Apartments_API.DTO
 {
-    public partial class Darbas
+    public class JobDto
     {
         public DateTime? SukurimoData { get; set; }
         public DateTime? IvykdymoData { get; set; }
@@ -14,9 +13,6 @@ namespace Apartments_API.Models
         public int FkSavininkasidIsNaudotojas { get; set; }
         public int? FkValytojasidIsNaudotojas { get; set; }
 
-        public virtual DarboBusena DarboBusena { get; set; }
-        public virtual Butas FkButasidButasNavigation { get; set; }
-        public virtual Savininkas FkSavininkasidIsNaudotojasNavigation { get; set; }
-        public virtual Valytojas FkValytojasidIsNaudotojasNavigation { get; set; }
+        public virtual JobStateDto DarboBusena { get; set; }
     }
 }

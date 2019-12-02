@@ -10,6 +10,7 @@ namespace Apartments_API.Repository.Repositories
     public class JobRepository : IJobRepository
     {
         private RepositoryContext _repository;
+
         public JobRepository(RepositoryContext repositoryContext)
         {
             _repository = repositoryContext;
@@ -17,12 +18,16 @@ namespace Apartments_API.Repository.Repositories
 
         public IEnumerable<Darbas> FindAll()
         {
-            return _repository.Set<Darbas>().AsNoTracking();
+            return _repository.Set<Darbas>()
+            .Include(o => o.DarboBusena)
+            .AsNoTracking();
         }
 
         public IEnumerable<Darbas> FindByCondition(Expression<Func<Darbas, bool>> expression)
         {
-            return _repository.Set<Darbas>().Where(expression).AsNoTracking();
+            return _repository.Set<Darbas>()
+            .Include(o => o.DarboBusena)
+            .Where(expression).AsNoTracking();
         }
 
         public void Update(Darbas entity)
