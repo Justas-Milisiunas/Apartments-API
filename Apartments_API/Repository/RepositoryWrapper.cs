@@ -8,6 +8,7 @@ namespace Apartments_API.Repository
 
         private IIsNaudotojasRepository _isNaudotojas;
         public IButasRepository _butas;
+        public IJobRepository _job;
 
 
         public RepositoryWrapper(RepositoryContext repositoryContext)
@@ -23,6 +24,11 @@ namespace Apartments_API.Repository
         public IButasRepository Butas
         {
             get { return _butas ??= new ButasRepository(_repositoryContext); }
+        }
+
+        public IJobRepository Job
+        {
+            get { return _job ??= new JobRepository(_repositoryContext);}
         }
 
 
