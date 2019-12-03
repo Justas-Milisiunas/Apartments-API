@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Apartments_API.DTO;
 using Apartments_API.Models;
 

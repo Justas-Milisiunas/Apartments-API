@@ -12,7 +12,7 @@ namespace Apartments_API.Repository
         /// </summary>
         /// <returns>Found objects</returns>
         IEnumerable<T> FindAll();
-        
+
         /// <summary>
         /// Returns all objects filtered by given expression
         /// </summary>
@@ -25,11 +25,12 @@ namespace Apartments_API.Repository
         /// </summary>
         /// <param name="entity">Updated object</param>
         void Update(T entity);
-        
+
         /// <summary>
-        /// Deletes selected object
+        /// Deletes item by given id
         /// </summary>
-        /// <param name="entity">Object to delete</param>
-        void Delete(T entity);
+        /// <param name="id">Item id</param>
+        /// <returns>true if deleted, false if not</returns>
+        bool Delete(int id);
     }
 }
