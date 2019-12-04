@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Apartments_API.DTO;
 using Apartments_API.Models;
 using Apartments_API.Repository;
@@ -26,7 +27,7 @@ namespace Apartments_API.Controllers
         /// </summary>
         /// <returns>All apartments list</returns>
         [HttpGet]
-        public ActionResult<IEnumerable<Butas>> GetAllApartments()
+        public ActionResult<IEnumerable<ApartmentDto>> GetAllApartments()
         {
             var apartments = _repository.Butas.FindAll();
             var mappedApartments = new List<ApartmentDto>();
