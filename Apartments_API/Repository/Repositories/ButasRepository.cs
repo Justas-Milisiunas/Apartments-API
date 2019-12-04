@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Apartments_API.DTO;
 using Apartments_API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,6 +53,34 @@ namespace Apartments_API.Repository.Repositories
         public bool Delete(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public IEnumerable<Butas> Search(ApartmentsSearchDto searchDto)
+        {
+            // TODO: add null check to new search options
+            var apartments = _repository.Set<Butas>()
+                .Include(o => o.BusenaNavigation)
+                .Include(o => o.FkSavininkasidIsNaudotojasNavigation)
+                .Include(o => o.FkSavininkasidIsNaudotojasNavigation.IdIsNaudotojasNavigation)
+                .Include(o => o.Darbas)
+                .Include(o => o.NuomosLaikotarpis)
+                .Include(o => o.Privalumas)
+                .Include(o => o.Reitingas)
+                .Include(o => o.Skundas)
+                .AsNoTracking().AsEnumerable();
+
+            var foundApartments = new List<Butas>();
+            foreach (var apartment in apartments)
+            {
+                if ((searchDto.OwnerId != null && apartment.FkSavininkasidIsNaudotojas == searchDto.OwnerId) ||
+                    (searchDto.TenantId != null &&
+                     apartment.NuomosLaikotarpis.Any(o => o.FkNuomininkasidIsNaudotojas.Equals(searchDto.TenantId))))
+                {
+                    foundApartments.Add(apartment);
+                }
+            }
+
+            return foundApartments;
         }
 
         public void Delete(Butas entity)

@@ -77,5 +77,27 @@ namespace Apartments_API.Controllers
 
             return Ok(reservation);
         }
+
+        /// <summary>
+        /// Can search apartments by owner id or renter id
+        /// </summary>
+        /// <param name="searchDto">Search options</param>
+        /// <returns>Found apartments</returns>
+        [HttpGet("search")]
+        public ActionResult<IEnumerable<ApartmentDto>> SearchApartments([FromBody] ApartmentsSearchDto searchDto)
+        {
+            if (searchDto.OwnerId == null && searchDto.TenantId == null)
+            {
+                return BadRequest("No search options");
+            }
+
+            var apartments = _repository.Butas.Search(searchDto);
+            if (!apartments.Any())
+            {
+                return NotFound("No apartments found");
+            }
+
+            return Ok(apartments);
+        }
     }
 }
