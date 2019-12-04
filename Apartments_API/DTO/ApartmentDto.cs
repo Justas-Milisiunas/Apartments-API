@@ -22,10 +22,10 @@ namespace Apartments_API.DTO
         public int IdButas { get; set; }
         public int FkSavininkasidIsNaudotojas { get; set; }
 
-        public virtual ButoBusena BusenaNavigation { get; set; }
+        public virtual ApartmentStatusDto Status { get; set; }
         public virtual OwnerDto Savininkas { get; set; }
         public virtual ICollection<Darbas> Darbas { get; set; }
-        public virtual ICollection<NuomosLaikotarpis> NuomosLaikotarpis { get; set; }
+        public virtual ICollection<RentIntervalDto> NuomosLaikotarpis { get; set; }
         public virtual ICollection<Privalumas> Privalumas { get; set; }
         public virtual ICollection<Reitingas> Reitingas { get; set; }
         public virtual ICollection<Skundas> Skundas { get; set; }

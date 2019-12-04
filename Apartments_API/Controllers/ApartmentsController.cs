@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Apartments_API.DTO;
 using Apartments_API.Models;
 using Apartments_API.Repository;
@@ -26,7 +27,7 @@ namespace Apartments_API.Controllers
         /// </summary>
         /// <returns>All apartments list</returns>
         [HttpGet]
-        public ActionResult<IEnumerable<Butas>> GetAllApartments()
+        public ActionResult<IEnumerable<ApartmentDto>> GetAllApartments()
         {
             var apartments = _repository.Butas.FindAll();
             var mappedApartments = new List<ApartmentDto>();
@@ -44,15 +45,15 @@ namespace Apartments_API.Controllers
         /// <param name="id">Apartment id</param>
         /// <returns>If apartment not found returns bad request response, if found returns apartment</returns>
         [HttpGet("{id}")]
-        public ActionResult<Butas> GetApartment(int id)
+        public ActionResult<ApartmentDto> GetApartment(int id)
         {
-            var foundApartment = _repository.Butas.FindByCondition(butas => butas.IdButas.Equals(id));
+            var foundApartment = _repository.Butas.FindByCondition(butas => butas.IdButas.Equals(id)).FirstOrDefault();
             if (foundApartment == null)
             {
                 return NotFound("Apartment not found");
             }
 
-            return Ok(foundApartment);
+            return Ok(_mapper.Map<Butas, ApartmentDto>(foundApartment));
         }
     }
 }
