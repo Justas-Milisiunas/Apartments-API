@@ -9,6 +9,7 @@ namespace Apartments_API.Repository
     {
         IIsNaudotojasRepository IsNaudotojas { get; }
         IButasRepository Butas { get; }
+        INuomosLaikotarpisRepository NuomosLaikotarpis { get; }
 
         void Save();
     }

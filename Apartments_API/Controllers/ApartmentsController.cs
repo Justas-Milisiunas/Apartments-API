@@ -55,5 +55,27 @@ namespace Apartments_API.Controllers
 
             return Ok(_mapper.Map<Butas, ApartmentDto>(foundApartment));
         }
+
+        /// <summary>
+        /// Makes reservation for the apartment
+        /// </summary>
+        /// <param name="booking">Booking information</param>
+        /// <returns>Booking reservation information</returns>
+        [HttpPut("book")]
+        public ActionResult<BookingDto> BookApartment([FromBody] BookingDto booking)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid booking information");
+            }
+
+            var reservation = _repository.NuomosLaikotarpis.CreateReservation(booking);
+            if (reservation == null)
+            {
+                return Conflict("Those days are already rented");
+            }
+
+            return Ok(reservation);
+        }
     }
 }

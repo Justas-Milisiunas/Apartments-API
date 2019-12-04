@@ -15,6 +15,8 @@ namespace Apartments_API.DTO
             CreateMap<Savininkas, OwnerDto>();
             CreateMap<NuomosLaikotarpis, RentIntervalDto>();
             CreateMap<ButoBusena, ApartmentStatusDto>();
+            CreateMap<NuomosLaikotarpis, BookingDto>();
+            CreateMap<BookingDto, NuomosLaikotarpis>();
         }
     }
 }
