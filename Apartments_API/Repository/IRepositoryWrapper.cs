@@ -10,7 +10,7 @@ namespace Apartments_API.Repository
         IIsNaudotojasRepository IsNaudotojas { get; }
         IButasRepository Butas { get; }
 
-        IJobRepository Job {get;}
+        IJobRepository Job { get; }
 
         void Save();
     }

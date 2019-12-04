@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using Apartments_API.DTO;
 using Apartments_API.Models;
 using Apartments_API.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Apartments_API.Controllers
 {
@@ -22,7 +24,7 @@ namespace Apartments_API.Controllers
 
         // GET: api/jobs
         [HttpGet]
-        public ActionResult<IEnumerable<Darbas>> GetAllJobs()
+        public ActionResult<IEnumerable<JobDto>> GetAllJobs()
         {
             var jobs = _repository.Job.FindAll();
             var mappedJobs = new List<JobDto>();
@@ -34,19 +36,36 @@ namespace Apartments_API.Controllers
 
         // GET: api/jobs/1
         [HttpGet("{id}")]
-        public ActionResult<Darbas> GetJob(int id)
+        public ActionResult<JobDto> GetJob(int id)
         {
-            var foundJob = _repository.Job.FindByCondition(job => job.IdDarbas.Equals(id));
+            var foundJob = _repository.Job.FindByCondition(job => job.IdDarbas.Equals(id)).FirstOrDefault();
             var tempJob = new Darbas();
             if (foundJob == null)
                 return NotFound("Job not found");
-            else
-            {
-                foreach (var job in foundJob)
-                    tempJob = job;
-                var retJob = _mapper.Map<Darbas, JobDto>(tempJob);
-                return Ok(retJob);
-            }
+
+            var retJob = _mapper.Map<Darbas, JobDto>(foundJob);
+            return Ok(retJob);
         }
+
+        // PUT: api/jobs/accept
+        [HttpPut("accept")]
+        public ActionResult<JobDto> AcceptWork([FromBody] JobAcceptDto job)
+        {
+            if (!ModelState.IsValid)
+                return NotFound("Invalid acceptWork data");
+
+            var foundJob = _repository.Job
+            .FindByCondition(o => o.IdDarbas.Equals(job.JobID)).FirstOrDefault(); ;
+            var changedJob = _repository.Job.MakeJobAsTaken(job).FirstOrDefault();
+            var retJob = _mapper.Map<Darbas, JobDto>(changedJob);
+            return Ok(retJob);
+        }
+
+        // TODO: 
+        // DarboPiremimas
+        // AtaskaitosGeneravimas
+        // Ivykdyto darbo patrvirtinimas
+        // Neuzbaigto darbo patvirtinimas
+        // DarbuIstorijosPerziura
     }
 }

@@ -9,6 +9,7 @@ namespace Apartments_API.DTO
         {
             CreateMap<Darbas, JobDto>();
             CreateMap<DarboBusena, JobStateDto>();
+            CreateMap<Darbas, JobAcceptDto>();
         }
     }
 }

@@ -2,32 +2,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Apartments_API.DTO;
 using Apartments_API.Models;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
 namespace Apartments_API.Repository.Repositories
 {
     public class JobRepository : IJobRepository
     {
-        private RepositoryContext _repository;
+        private RepositoryContext _context;
 
         public JobRepository(RepositoryContext repositoryContext)
         {
-            _repository = repositoryContext;
+            _context = repositoryContext;
         }
 
         public IEnumerable<Darbas> FindAll()
         {
-            return _repository.Set<Darbas>()
+            return _context.Set<Darbas>()
             .Include(o => o.DarboBusena)
             .AsNoTracking();
         }
 
         public IEnumerable<Darbas> FindByCondition(Expression<Func<Darbas, bool>> expression)
         {
-            return _repository.Set<Darbas>()
+            return _context.Set<Darbas>()
+            .Where(expression)
             .Include(o => o.DarboBusena)
-            .Where(expression).AsNoTracking();
+            .AsNoTracking();
         }
 
         public void Update(Darbas entity)
@@ -35,9 +38,21 @@ namespace Apartments_API.Repository.Repositories
             throw new NotImplementedException();
         }
 
-        public void Delete(Darbas entity)
+        public bool Delete(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public IEnumerable<Darbas> MakeJobAsTaken(JobAcceptDto entity)
+        {
+            var job = _context.Set<Darbas>().Where(darbas => darbas.IdDarbas.Equals(entity.JobID));
+            var tempJob = job.FirstOrDefault();
+            tempJob.Busena = 2; // darbo busena - priimtas
+            tempJob.FkValytojasidIsNaudotojas = entity.IsUserID;
+            _context.SaveChangesAsync();
+            
+            return job.Include(o => o.DarboBusena).AsNoTracking();
+
         }
     }
 }
