@@ -47,12 +47,33 @@ namespace Apartments_API.Repository.Repositories
         {
             var job = _context.Set<Darbas>().Where(darbas => darbas.IdDarbas.Equals(entity.JobID));
             var tempJob = job.FirstOrDefault();
-            tempJob.Busena = 2; // darbo busena - priimtas
+            tempJob.Busena = 2; // Change work state to - priimtas
             tempJob.FkValytojasidIsNaudotojas = entity.IsUserID;
             _context.SaveChangesAsync();
-            
-            return job.Include(o => o.DarboBusena).AsNoTracking();
 
+            return job.Include(o => o.DarboBusena).AsNoTracking();
         }
+
+        public IEnumerable<Darbas> MakeJobAsDone(JobAcceptDto entity)
+        {
+            var job = _context.Set<Darbas>().Where(darbas => darbas.IdDarbas.Equals(entity.JobID));
+            var tempJob = job.FirstOrDefault();
+            tempJob.Busena = 1; // Change work state to - atliktas
+            _context.SaveChangesAsync();
+
+            return job.Include(o => o.DarboBusena).AsNoTracking();
+        }
+
+        public IEnumerable<Darbas> CancelJob(JobAcceptDto entity)
+        {
+            var job = _context.Set<Darbas>().Where(darbas => darbas.IdDarbas.Equals(entity.JobID));
+            var tempJob = job.FirstOrDefault();
+            tempJob.Busena = 3; // Change work state to laukiantis
+            tempJob.FkValytojasidIsNaudotojas = null; // delete(worker)
+            _context.SaveChangesAsync();
+
+            return job.Include(o => o.DarboBusena).AsNoTracking();
+        }
+
     }
 }

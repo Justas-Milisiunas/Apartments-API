@@ -61,6 +61,33 @@ namespace Apartments_API.Controllers
             return Ok(retJob);
         }
 
+        // PUT: api/jobs/done
+        [HttpPut("done")]
+        public ActionResult<JobDto> FinishWork([FromBody] JobAcceptDto job)
+        {
+            if (!ModelState.IsValid)
+                return NotFound("Invalid acceptWork data");
+
+            var foundJob = _repository.Job
+            .FindByCondition(o => o.IdDarbas.Equals(job.JobID)).FirstOrDefault(); ;
+            var changedJob = _repository.Job.MakeJobAsDone(job).FirstOrDefault();
+            var retJob = _mapper.Map<Darbas, JobDto>(changedJob);
+            return Ok(retJob);
+        }
+
+        [HttpPut("delete")]
+        public ActionResult<JobDto> CancelTakenJob([FromBody] JobAcceptDto job)
+        {
+            if (!ModelState.IsValid)
+                return NotFound("Invalid acceptWork data");
+
+            var foundJob = _repository.Job
+            .FindByCondition(o => o.IdDarbas.Equals(job.JobID)).FirstOrDefault(); ;
+            var changedJob = _repository.Job.CancelJob(job).FirstOrDefault();
+            var retJob = _mapper.Map<Darbas, JobDto>(changedJob);
+            return Ok(retJob);
+        }
+
         // TODO: 
         // DarboPiremimas
         // AtaskaitosGeneravimas
