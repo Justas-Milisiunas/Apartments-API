@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Apartments_API.DTO;
 using Apartments_API.Models;
 using Apartments_API.Repository;
@@ -54,8 +55,6 @@ namespace Apartments_API.Controllers
             if (!ModelState.IsValid)
                 return NotFound("Invalid acceptWork data");
 
-            var foundJob = _repository.Job
-            .FindByCondition(o => o.IdDarbas.Equals(job.JobID)).FirstOrDefault(); ;
             var changedJob = _repository.Job.MakeJobAsTaken(job).FirstOrDefault();
             var retJob = _mapper.Map<Darbas, JobDto>(changedJob);
             return Ok(retJob);
@@ -68,8 +67,6 @@ namespace Apartments_API.Controllers
             if (!ModelState.IsValid)
                 return NotFound("Invalid acceptWork data");
 
-            var foundJob = _repository.Job
-            .FindByCondition(o => o.IdDarbas.Equals(job.JobID)).FirstOrDefault(); ;
             var changedJob = _repository.Job.MakeJobAsDone(job).FirstOrDefault();
             var retJob = _mapper.Map<Darbas, JobDto>(changedJob);
             return Ok(retJob);
@@ -81,18 +78,24 @@ namespace Apartments_API.Controllers
             if (!ModelState.IsValid)
                 return NotFound("Invalid acceptWork data");
 
-            var foundJob = _repository.Job
-            .FindByCondition(o => o.IdDarbas.Equals(job.JobID)).FirstOrDefault(); ;
             var changedJob = _repository.Job.CancelJob(job).FirstOrDefault();
             var retJob = _mapper.Map<Darbas, JobDto>(changedJob);
             return Ok(retJob);
         }
 
+        // GET: api/history
+        [HttpGet("history/{id}")]
+        public ActionResult<IEnumerable<JobDto>> GetHistoryJobs(int id)
+        {
+            var jobs = _repository.Job.FindHistory(id);
+            var mappedJobs = new List<JobDto>();
+            foreach (var job in jobs)
+                mappedJobs.Add(_mapper.Map<Darbas, JobDto>(job));
+
+            return Ok(mappedJobs);
+        }
+
         // TODO: 
-        // DarboPiremimas
         // AtaskaitosGeneravimas
-        // Ivykdyto darbo patrvirtinimas
-        // Neuzbaigto darbo patvirtinimas
-        // DarbuIstorijosPerziura
     }
 }

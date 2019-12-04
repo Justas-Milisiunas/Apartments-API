@@ -22,6 +22,6 @@ namespace Apartments_API.Repository.Repositories
 
         IEnumerable<Darbas> CancelJob(JobAcceptDto entity);
 
-
+        IEnumerable<Darbas> FindHistory(int id);
     }
 }

@@ -49,7 +49,7 @@ namespace Apartments_API.Repository.Repositories
             var tempJob = job.FirstOrDefault();
             tempJob.Busena = 2; // Change work state to - priimtas
             tempJob.FkValytojasidIsNaudotojas = entity.IsUserID;
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             return job.Include(o => o.DarboBusena).AsNoTracking();
         }
@@ -59,7 +59,7 @@ namespace Apartments_API.Repository.Repositories
             var job = _context.Set<Darbas>().Where(darbas => darbas.IdDarbas.Equals(entity.JobID));
             var tempJob = job.FirstOrDefault();
             tempJob.Busena = 1; // Change work state to - atliktas
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             return job.Include(o => o.DarboBusena).AsNoTracking();
         }
@@ -70,10 +70,18 @@ namespace Apartments_API.Repository.Repositories
             var tempJob = job.FirstOrDefault();
             tempJob.Busena = 3; // Change work state to laukiantis
             tempJob.FkValytojasidIsNaudotojas = null; // delete(worker)
-            _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             return job.Include(o => o.DarboBusena).AsNoTracking();
         }
+
+        public IEnumerable<Darbas> FindHistory(int id)
+        {
+            return _context.Set<Darbas>()
+            .Where(o => o.FkValytojasidIsNaudotojas == id)
+            .AsNoTracking();;
+        }
+
 
     }
 }
