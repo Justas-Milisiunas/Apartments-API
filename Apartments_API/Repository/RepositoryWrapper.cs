@@ -9,6 +9,7 @@ namespace Apartments_API.Repository
         private IIsNaudotojasRepository _isNaudotojas;
         private IButasRepository _butas;
         private INuomosLaikotarpisRepository _nuomosLaikotarpis;
+        private IComplaintRepository _skundas;
 
 
         public RepositoryWrapper(RepositoryContext repositoryContext)
@@ -29,6 +30,11 @@ namespace Apartments_API.Repository
         public INuomosLaikotarpisRepository NuomosLaikotarpis
         {
             get { return _nuomosLaikotarpis ??= new NuomosLaikotarpisRepository(_repositoryContext); }
+        }
+
+        public IComplaintRepository Skundas
+        {
+            get { return _skundas ??= new ComplaintRepository(_repositoryContext); }
         }
 
 

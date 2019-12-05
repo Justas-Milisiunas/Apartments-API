@@ -83,7 +83,7 @@ namespace Apartments_API.Controllers
         /// </summary>
         /// <param name="searchDto">Search options</param>
         /// <returns>Found apartments</returns>
-        [HttpGet("search")]
+        [HttpPost("search")]
         public ActionResult<IEnumerable<ApartmentDto>> SearchApartments([FromBody] ApartmentsSearchDto searchDto)
         {
             if (searchDto.OwnerId == null && searchDto.TenantId == null)
@@ -98,6 +98,28 @@ namespace Apartments_API.Controllers
             }
 
             return Ok(apartments);
+        }
+
+        /// <summary>
+        /// Saves complaint in the db
+        /// </summary>
+        /// <param name="complaintWriteDto">Complaint data</param>
+        /// <returns>Complaint data if saved succesfully, badrequest error if not</returns>
+        [HttpPost("complaint")]
+        public ActionResult<ComplaintDto> WriteComplaint([FromBody] ComplaintWriteDto complaintWriteDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid complaint data");
+            }
+
+            var savedComplaint = _repository.Skundas.WriteComplaint(complaintWriteDto);
+            if (savedComplaint == null)
+            {
+                return BadRequest("Complaint could not be saved");
+            }
+
+            return Ok(_mapper.Map<Skundas, ComplaintDto>(savedComplaint));
         }
     }
 }
