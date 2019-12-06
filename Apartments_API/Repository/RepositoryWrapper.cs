@@ -10,6 +10,7 @@ namespace Apartments_API.Repository
         private IButasRepository _butas;
         private INuomosLaikotarpisRepository _nuomosLaikotarpis;
         private IComplaintRepository _skundas;
+        public IJobRepository _job;
 
 
         public RepositoryWrapper(RepositoryContext repositoryContext)
@@ -35,6 +36,11 @@ namespace Apartments_API.Repository
         public IComplaintRepository Skundas
         {
             get { return _skundas ??= new ComplaintRepository(_repositoryContext); }
+        }
+
+        public IJobRepository Job
+        {
+            get { return _job ??= new JobRepository(_repositoryContext); }
         }
 
 

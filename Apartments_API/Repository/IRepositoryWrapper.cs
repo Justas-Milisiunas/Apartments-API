@@ -12,6 +12,8 @@ namespace Apartments_API.Repository
         INuomosLaikotarpisRepository NuomosLaikotarpis { get; }
         IComplaintRepository Skundas { get; }
 
+        IJobRepository Job { get; }
+
         void Save();
     }
 }
