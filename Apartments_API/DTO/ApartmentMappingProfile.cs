@@ -17,6 +17,8 @@ namespace Apartments_API.DTO
             CreateMap<ButoBusena, ApartmentStatusDto>();
             CreateMap<NuomosLaikotarpis, BookingDto>();
             CreateMap<BookingDto, NuomosLaikotarpis>();
+            CreateMap<Reitingas, RatingDto>();
+            CreateMap<RatingDto, Reitingas>();
         }
     }
 }

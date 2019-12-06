@@ -143,5 +143,22 @@ namespace Apartments_API.Controllers
 
             return Ok();
         }
+
+        /// <summary>
+        /// Saves rating data
+        /// </summary>
+        /// <param name="ratingDto">Rating data</param>
+        /// <returns>Rating if saved successfully, response error if not</returns>
+        [HttpPost("rate")]
+        public ActionResult<RatingDto> RateApartment([FromBody] RatingDto ratingDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid rating data");
+            }
+
+            var savedRating = _repository.Butas.Rate(ratingDto);
+            return Ok(_mapper.Map<Reitingas, RatingDto>(savedRating));
+        }
     }
 }

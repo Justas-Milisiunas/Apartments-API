@@ -83,6 +83,27 @@ namespace Apartments_API.Repository.Repositories
             return foundApartments;
         }
 
+        public Reitingas Rate(RatingDto ratingDto)
+        {
+            var foundRating = _repository
+                .Set<Reitingas>()
+                .FirstOrDefault(o => o.FkButasidButas.Equals(ratingDto.FkButasidButas) &&
+                                     o.FkNuomininkasidIsNaudotojas.Equals(ratingDto.FkNuomininkasidIsNaudotojas));
+
+            if (foundRating != null)
+            {
+                foundRating.Ivertinimas = ratingDto.Ivertinimas;
+            }
+            else
+            {
+                foundRating = _repository.Mapper.Map<RatingDto, Reitingas>(ratingDto);
+                _repository.Set<Reitingas>().Add(foundRating);
+            }
+
+            _repository.SaveChanges();
+            return foundRating;
+        }
+
         public void Delete(Butas entity)
         {
             throw new NotImplementedException();
