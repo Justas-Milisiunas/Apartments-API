@@ -47,6 +47,8 @@ namespace Apartments_API.Repository.Repositories
         {
             var job = _context.Set<Darbas>().Where(darbas => darbas.IdDarbas.Equals(entity.JobID));
             var tempJob = job.FirstOrDefault();
+            if (tempJob.Busena != 3)
+                return Enumerable.Empty<Darbas>();
             tempJob.Busena = 2; // Change work state to - priimtas
             tempJob.FkValytojasidIsNaudotojas = entity.IsUserID;
             _context.SaveChanges();
@@ -58,16 +60,23 @@ namespace Apartments_API.Repository.Repositories
         {
             var job = _context.Set<Darbas>().Where(darbas => darbas.IdDarbas.Equals(entity.JobID));
             var tempJob = job.FirstOrDefault();
-            tempJob.Busena = 1; // Change work state to - atliktas
-            _context.SaveChanges();
-
-            return job.Include(o => o.DarboBusena).AsNoTracking();
+            if (tempJob.Busena == 2)
+            {
+                tempJob.Busena = 1; // Change work state to - atliktas
+                tempJob.FkValytojasidIsNaudotojas = entity.IsUserID;
+                _context.SaveChanges();
+                return job.Include(o => o.DarboBusena).AsNoTracking();
+            }
+            else
+                return Enumerable.Empty<Darbas>();
         }
 
         public IEnumerable<Darbas> CancelJob(JobAcceptDto entity)
         {
             var job = _context.Set<Darbas>().Where(darbas => darbas.IdDarbas.Equals(entity.JobID));
             var tempJob = job.FirstOrDefault();
+            if (tempJob.Busena != 2)
+                return Enumerable.Empty<Darbas>();
             tempJob.Busena = 3; // Change work state to laukiantis
             tempJob.FkValytojasidIsNaudotojas = null; // delete(worker)
             _context.SaveChanges();
@@ -79,9 +88,7 @@ namespace Apartments_API.Repository.Repositories
         {
             return _context.Set<Darbas>()
             .Where(o => o.FkValytojasidIsNaudotojas == id)
-            .AsNoTracking();;
+            .AsNoTracking(); ;
         }
-
-
     }
 }

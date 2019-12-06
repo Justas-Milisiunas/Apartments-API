@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Apartments_API.DTO;
 using Apartments_API.Models;
@@ -56,6 +58,11 @@ namespace Apartments_API.Controllers
                 return NotFound("Invalid acceptWork data");
 
             var changedJob = _repository.Job.MakeJobAsTaken(job).FirstOrDefault();
+            if (changedJob == null)
+            {
+                return BadRequest("Job is already taken or it is done");
+            }
+            
             var retJob = _mapper.Map<Darbas, JobDto>(changedJob);
             return Ok(retJob);
         }
@@ -68,10 +75,13 @@ namespace Apartments_API.Controllers
                 return NotFound("Invalid acceptWork data");
 
             var changedJob = _repository.Job.MakeJobAsDone(job).FirstOrDefault();
+            if (changedJob == null)
+                return BadRequest("Job is already done or it is not taken by this user");
             var retJob = _mapper.Map<Darbas, JobDto>(changedJob);
             return Ok(retJob);
         }
 
+        // PUT: api/jobs/delete
         [HttpPut("delete")]
         public ActionResult<JobDto> CancelTakenJob([FromBody] JobAcceptDto job)
         {
@@ -79,11 +89,13 @@ namespace Apartments_API.Controllers
                 return NotFound("Invalid acceptWork data");
 
             var changedJob = _repository.Job.CancelJob(job).FirstOrDefault();
+            if (changedJob == null)
+                return BadRequest("Job is already done or it is not taken by this user");
             var retJob = _mapper.Map<Darbas, JobDto>(changedJob);
             return Ok(retJob);
         }
 
-        // GET: api/history
+        // GET: api/jobs/history
         [HttpGet("history/{id}")]
         public ActionResult<IEnumerable<JobDto>> GetHistoryJobs(int id)
         {
@@ -94,8 +106,5 @@ namespace Apartments_API.Controllers
 
             return Ok(mappedJobs);
         }
-
-        // TODO: 
-        // AtaskaitosGeneravimas
     }
 }

@@ -14,5 +14,7 @@ namespace Apartments_API.DTO
         public int? FkValytojasidIsNaudotojas { get; set; }
 
         public virtual JobStateDto DarboBusena { get; set; }
+        public virtual ApartmentDto Butas {get; set;}
+        public virtual WorkerDto Valytojas {get; set;}
     }
 }
