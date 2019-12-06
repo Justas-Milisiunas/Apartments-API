@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Apartments_API.DTO;
 using Apartments_API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Apartments_API.Repository.Repositories
 {
@@ -55,6 +56,24 @@ namespace Apartments_API.Repository.Repositories
             _repository.Set<NuomosLaikotarpis>().Add(reservation);
             _repository.SaveChanges();
             return reservation;
+        }
+
+        public bool CancelReservation(BookingCancelDto cancelDto)
+        {
+            var rent = _repository.Set<NuomosLaikotarpis>()
+                .Include(o => o.FkNuomininkasidIsNaudotojasNavigation)
+                .Where(o => o.IdNuomosLaikotarpis.Equals(cancelDto.RentPeriodId) &&
+                            o.FkNuomininkasidIsNaudotojas.Equals(cancelDto.TenantId));
+
+            if (!rent.Any())
+            {
+                return false;
+            }
+
+            _repository.Set<NuomosLaikotarpis>().Remove(rent.First());
+            _repository.SaveChanges();
+
+            return true;
         }
     }
 }

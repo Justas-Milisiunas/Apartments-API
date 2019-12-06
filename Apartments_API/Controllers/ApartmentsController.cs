@@ -121,5 +121,27 @@ namespace Apartments_API.Controllers
 
             return Ok(_mapper.Map<Skundas, ComplaintDto>(savedComplaint));
         }
+
+        /// <summary>
+        /// Cancels apartment's booking
+        /// </summary>
+        /// <param name="cancelDto">Cancellation data</param>
+        /// <returns>Ok if cancelled, error response if not</returns>
+        [HttpPost("book/cancel")]
+        public IActionResult CancelBooking([FromBody] BookingCancelDto cancelDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid booking cancellation data");
+            }
+
+            var cancelled = _repository.NuomosLaikotarpis.CancelReservation(cancelDto);
+            if (!cancelled)
+            {
+                return BadRequest("Booking could not be cancelled");
+            }
+
+            return Ok();
+        }
     }
 }

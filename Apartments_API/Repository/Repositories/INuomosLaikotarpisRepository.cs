@@ -11,5 +11,12 @@ namespace Apartments_API.Repository.Repositories
         /// <param name="bookingDto">Booking information</param>
         /// <returns>Booking information with id</returns>
         NuomosLaikotarpis CreateReservation(BookingDto bookingDto);
+
+        /// <summary>
+        /// Removes nuomos laikotarpis object from the db
+        /// </summary>
+        /// <param name="cancelDto">Cancel data</param>
+        /// <returns>true if removed successfully, false if not</returns>
+        bool CancelReservation(BookingCancelDto cancelDto);
     }
 }
