@@ -62,7 +62,7 @@ namespace Apartments_API.Controllers
             {
                 return BadRequest("Job is already taken or it is done");
             }
-            
+
             var retJob = _mapper.Map<Darbas, JobDto>(changedJob);
             return Ok(retJob);
         }
@@ -105,6 +105,43 @@ namespace Apartments_API.Controllers
                 mappedJobs.Add(_mapper.Map<Darbas, JobDto>(job));
 
             return Ok(mappedJobs);
+        }
+
+        // GET: api/jobs/report
+        [HttpGet("report")]
+        public IActionResult GenerateReport([FromBody] ReportDto reportData)   // [FromBody] ReportDto reportData
+        {
+            var jobs = _repository.Job.FindDataToReport(reportData.UserID);
+
+            var mappedJobs = new List<JobDto>();
+            foreach (var job in jobs)
+                mappedJobs.Add(_mapper.Map<Darbas, JobDto>(job));
+            var userData = _repository.IsNaudotojas
+                            .FindByCondition(o => o.IdIsNaudotojas == reportData.UserID)
+                            .FirstOrDefault();
+            var userName = userData.Vardas;
+            var userSurname = userData.Pavarde;
+
+            decimal moneyEarned = 0;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendFormat("{0};{1}", userName, userSurname);
+            sb.AppendLine("Data nuo;Data iki;");
+            sb.AppendFormat("{0};{1};\n", reportData.From, reportData.To);
+            sb.AppendLine("Apartment;Date of creation;Date of completion;Payment");
+            foreach (var job in mappedJobs)
+            {
+                int dateStartComparison = DateTime.Compare(reportData.From, (DateTime)job.SukurimoData);
+                int dateEndComparison = DateTime.Compare(reportData.To, (DateTime)job.IvykdymoData);
+                if (dateStartComparison <= 0 && dateEndComparison >= 0)
+                {
+                    var apartmentName = job.Butas.Pavadinimas;
+                    sb.AppendFormat("{0};{1};{2};{3}\n", apartmentName, job.SukurimoData, job.IvykdymoData, job.Uzmokestis);
+                    moneyEarned += (decimal)job.Uzmokestis;
+                }
+            }
+            sb.AppendFormat("{0};{1};{2};{3}\n", "", "", "Profit:", moneyEarned);
+            return File(System.Text.Encoding.ASCII.GetBytes(sb.ToString()), "text/csv", "data.csv");
         }
     }
 }

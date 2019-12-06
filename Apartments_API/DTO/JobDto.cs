@@ -15,6 +15,5 @@ namespace Apartments_API.DTO
 
         public virtual JobStateDto DarboBusena { get; set; }
         public virtual ApartmentDto Butas {get; set;}
-        public virtual WorkerDto Valytojas {get; set;}
     }
 }

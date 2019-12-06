@@ -64,6 +64,7 @@ namespace Apartments_API.Repository.Repositories
             {
                 tempJob.Busena = 1; // Change work state to - atliktas
                 tempJob.FkValytojasidIsNaudotojas = entity.IsUserID;
+                tempJob.IvykdymoData = DateTime.Now;
                 _context.SaveChanges();
                 return job.Include(o => o.DarboBusena).AsNoTracking();
             }
@@ -88,7 +89,15 @@ namespace Apartments_API.Repository.Repositories
         {
             return _context.Set<Darbas>()
             .Where(o => o.FkValytojasidIsNaudotojas == id)
-            .AsNoTracking(); ;
+            .AsNoTracking();
+        }
+
+        public IEnumerable<Darbas> FindDataToReport(int id)
+        {
+            return _context.Set<Darbas>()
+            .Where(o => o.FkValytojasidIsNaudotojas == id)
+            .Include(o => o.FkButasidButasNavigation)
+            .AsNoTracking();
         }
     }
 }

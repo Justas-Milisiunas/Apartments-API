@@ -11,8 +11,6 @@ namespace Apartments_API.DTO
             CreateMap<DarboBusena, JobStateDto>();
             CreateMap<Darbas, JobAcceptDto>();
             CreateMap<Darbas, JobDto>()
-            .ForMember(dest => dest.Valytojas,
-                opt => opt.MapFrom(src => src.FkValytojasidIsNaudotojasNavigation))
             .ForMember(dest => dest.Butas,
                 opt => opt.MapFrom(src => src.FkButasidButasNavigation));
         }
