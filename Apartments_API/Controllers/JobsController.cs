@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Apartments_API.DTO;
 using Apartments_API.Models;
 using Apartments_API.Repository;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Apartments_API.Controllers
 {
@@ -42,7 +40,6 @@ namespace Apartments_API.Controllers
         public ActionResult<JobDto> GetJob(int id)
         {
             var foundJob = _repository.Job.FindByCondition(job => job.IdDarbas.Equals(id)).FirstOrDefault();
-            var tempJob = new Darbas();
             if (foundJob == null)
                 return NotFound("Job not found");
 
@@ -91,6 +88,7 @@ namespace Apartments_API.Controllers
             var changedJob = _repository.Job.CancelJob(job).FirstOrDefault();
             if (changedJob == null)
                 return BadRequest("Job is already done or it is not taken by this user");
+
             var retJob = _mapper.Map<Darbas, JobDto>(changedJob);
             return Ok(retJob);
         }
@@ -101,6 +99,7 @@ namespace Apartments_API.Controllers
         {
             var jobs = _repository.Job.FindHistory(id);
             var mappedJobs = new List<JobDto>();
+
             foreach (var job in jobs)
                 mappedJobs.Add(_mapper.Map<Darbas, JobDto>(job));
 
@@ -109,16 +108,18 @@ namespace Apartments_API.Controllers
 
         // GET: api/jobs/report
         [HttpGet("report")]
-        public IActionResult GenerateReport([FromBody] ReportDto reportData)   // [FromBody] ReportDto reportData
+        public IActionResult GenerateReport([FromBody] ReportDto reportData) // [FromBody] ReportDto reportData
         {
             var jobs = _repository.Job.FindDataToReport(reportData.UserID);
-
             var mappedJobs = new List<JobDto>();
+            
             foreach (var job in jobs)
                 mappedJobs.Add(_mapper.Map<Darbas, JobDto>(job));
+            
             var userData = _repository.IsNaudotojas
-                            .FindByCondition(o => o.IdIsNaudotojas == reportData.UserID)
-                            .FirstOrDefault();
+                .FindByCondition(o => o.IdIsNaudotojas == reportData.UserID)
+                .FirstOrDefault();
+            
             var userName = userData.Vardas;
             var userSurname = userData.Pavarde;
 
@@ -129,22 +130,25 @@ namespace Apartments_API.Controllers
             sb.AppendLine("Data nuo;Data iki;");
             sb.AppendFormat("{0};{1};\n", reportData.From, reportData.To);
             sb.AppendLine("Apartment;Date of creation;Date of completion;Payment");
+            
             foreach (var job in mappedJobs)
             {
                 if (job.SukurimoData != null && job.IvykdymoData != null)
                 {
-                    int dateStartComparison = DateTime.Compare(reportData.From, (DateTime)job.SukurimoData);
-                    int dateEndComparison = DateTime.Compare(reportData.To, (DateTime)job.IvykdymoData);
+                    int dateStartComparison = DateTime.Compare(reportData.From, (DateTime) job.SukurimoData);
+                    int dateEndComparison = DateTime.Compare(reportData.To, (DateTime) job.IvykdymoData);
                     if (dateStartComparison <= 0 && dateEndComparison >= 0)
                     {
                         var apartmentName = job.Butas.Pavadinimas;
-                        sb.AppendFormat("{0};{1};{2};{3}\n", apartmentName, job.SukurimoData, job.IvykdymoData, job.Uzmokestis);
-                        moneyEarned += (decimal)job.Uzmokestis;
+                        sb.AppendFormat("{0};{1};{2};{3}\n", apartmentName, job.SukurimoData, job.IvykdymoData,
+                            job.Uzmokestis);
+                        moneyEarned += (decimal) job.Uzmokestis;
                     }
                 }
             }
+
             sb.AppendFormat("{0};{1};{2};{3}\n", "", "", "Profit:", moneyEarned);
-            return File(System.Text.Encoding.ASCII.GetBytes(sb.ToString()), "text/csv", "data.csv");
+            return File(Encoding.ASCII.GetBytes(sb.ToString()), "text/csv", "data.csv");
         }
     }
 }
