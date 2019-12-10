@@ -12,6 +12,7 @@ namespace Apartments_API.DTO
                     opt => opt.MapFrom(src => src.FkSavininkasidIsNaudotojasNavigation))
                 .ForMember(dest => dest.Nuotrauka, opt => opt.MapFrom(src => src.NuotraukaUrl))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.BusenaNavigation));
+            CreateMap<ApartmentCreateDto, Butas>();
             CreateMap<Savininkas, OwnerDto>();
             CreateMap<NuomosLaikotarpis, RentIntervalDto>();
             CreateMap<ButoBusena, ApartmentStatusDto>();

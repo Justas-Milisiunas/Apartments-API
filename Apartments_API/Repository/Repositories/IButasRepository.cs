@@ -19,5 +19,8 @@ namespace Apartments_API.Repository.Repositories
         /// <param name="ratingDto">Rating data</param>
         /// <returns>Created or Updated rating</returns>
         Reitingas Rate(RatingDto ratingDto);
+        Butas Add(ApartmentCreateDto apartmentCreateDto);
+        void Update(ApartmentUpdateDto apartmentCreateDto);
+        bool Delete(ApartmentDeleteDto apartmentCreateDto);
     }
 }

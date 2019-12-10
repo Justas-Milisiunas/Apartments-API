@@ -1,5 +1,6 @@
 using Apartments_API.DTO;
 using Apartments_API.Models;
+using System.Collections.Generic;
 
 namespace Apartments_API.Repository.Repositories
 {
@@ -11,5 +12,7 @@ namespace Apartments_API.Repository.Repositories
         /// <param name="complaintDto">Complaint information</param>
         /// <returns>Saved complaint information</returns>
         Skundas WriteComplaint(ComplaintWriteDto complaintDto);
+        IEnumerable<Skundas> Search(ApartmentsSearchDto searchDto);
+
     }
 }

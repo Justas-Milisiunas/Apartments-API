@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Apartments_API.DTO;
 
 namespace Apartments_API.Models
 {
@@ -12,6 +13,29 @@ namespace Apartments_API.Models
             Privalumas = new HashSet<Privalumas>();
             Reitingas = new HashSet<Reitingas>();
             Skundas = new HashSet<Skundas>();
+            Busena = 1;
+            PridejimoData = DateTime.UtcNow;
+        }
+        public Butas(ApartmentCreateDto apartmentCreateDto)
+        {
+            Darbas = new HashSet<Darbas>();
+            NuomosLaikotarpis = new HashSet<NuomosLaikotarpis>();
+            Privalumas = new HashSet<Privalumas>();
+            Reitingas = new HashSet<Reitingas>();
+            Skundas = new HashSet<Skundas>();
+
+            Adresas = apartmentCreateDto.Adresas;
+            Aprašas = apartmentCreateDto.Aprašas;
+            Dydis = apartmentCreateDto.Dydis;
+            FkSavininkasidIsNaudotojas = apartmentCreateDto.FkSavininkasidIsNaudotojas;
+            KainaUzNakti = apartmentCreateDto.KainaUzNakti;
+            KambaruSkaicius = apartmentCreateDto.KambaruSkaicius;
+            Miestas = apartmentCreateDto.Miestas;
+            NuotraukaUrl = apartmentCreateDto.NuotraukaUrl;
+            Pavadinimas = apartmentCreateDto.Pavadinimas;
+            Šalis = apartmentCreateDto.Šalis;
+            Busena = 1;
+            PridejimoData = DateTime.UtcNow;
         }
 
         public int? Dydis { get; set; }

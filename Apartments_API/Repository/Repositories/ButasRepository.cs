@@ -103,10 +103,59 @@ namespace Apartments_API.Repository.Repositories
             _repository.SaveChanges();
             return foundRating;
         }
-
-        public void Delete(Butas entity)
+        public Butas Add(ApartmentCreateDto apartmentCreateDto)
         {
-            throw new NotImplementedException();
+           
+
+            var apartment = _repository.Mapper.Map<ApartmentCreateDto,Butas> (apartmentCreateDto);
+            _repository.Set<Butas>().Add(apartment);
+            _repository.SaveChanges();
+
+            return apartment;
+        }
+        public void Update(ApartmentUpdateDto apartmentUpdateDto)
+        {
+
+
+            //var apartment = _repository.Mapper.Map<ApartmentCreateDto, Butas>(apartmentCreateDto);
+            var apartment = _repository.Set<Butas>()
+                  .Include(o => o.FkSavininkasidIsNaudotojasNavigation)
+                   .Where(o => o.IdButas.Equals(apartmentUpdateDto.idButas) &&
+                               o.FkSavininkasidIsNaudotojas.Equals(apartmentUpdateDto.FkSavininkasidIsNaudotojas));
+            apartment.First().Adresas = apartmentUpdateDto.Adresas;
+            apartment.First().Dydis = apartmentUpdateDto.Dydis;
+
+            apartment.First().KambaruSkaicius = apartmentUpdateDto.KambaruSkaicius;
+
+            apartment.First().KainaUzNakti = apartmentUpdateDto.KainaUzNakti;
+            apartment.First().NuotraukaUrl = apartmentUpdateDto.NuotraukaUrl;
+            apartment.First().Aprašas = apartmentUpdateDto.Aprašas;
+            apartment.First().Pavadinimas = apartmentUpdateDto.Pavadinimas;
+            apartment.First().Miestas = apartmentUpdateDto.Miestas;
+            apartment.First().Šalis = apartmentUpdateDto.Šalis;
+            _repository.Set<Butas>().Update(apartment.First());
+            _repository.SaveChanges();
+
+            //return apartment;
+        }
+
+        public bool Delete(ApartmentDeleteDto apartmentDeleteDto)
+        {
+            
+            var apartment = _repository.Set<Butas>()
+                   .Include(o => o.FkSavininkasidIsNaudotojasNavigation)
+                    .Where(o => o.IdButas.Equals(apartmentDeleteDto.IdButas) &&
+                                o.FkSavininkasidIsNaudotojas.Equals(apartmentDeleteDto.FkSavininkasidIsNaudotojas));
+
+                if (!apartment.Any())
+                {
+                    return false;
+                }
+                _repository.Set<Butas>().Remove(apartment.First());
+                _repository.SaveChanges();
+
+                return true;
+            
         }
     }
 }

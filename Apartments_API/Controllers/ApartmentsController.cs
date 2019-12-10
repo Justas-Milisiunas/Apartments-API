@@ -143,7 +143,7 @@ namespace Apartments_API.Controllers
 
             return Ok();
         }
-
+ 
         /// <summary>
         /// Saves rating data
         /// </summary>
@@ -160,5 +160,89 @@ namespace Apartments_API.Controllers
             var savedRating = _repository.Butas.Rate(ratingDto);
             return Ok(_mapper.Map<Reitingas, RatingDto>(savedRating));
         }
+
+
+        /// <summary>
+        /// Delete apartment
+        /// </summary>
+        /// <param name="apartmentDeleteDto">Cancellation data</param>
+        /// <returns>Ok if cancelled, error response if not</returns>
+        [HttpPost("deleteApartment")]
+        public IActionResult DeleteApartment([FromBody] ApartmentDeleteDto apartmentDeleteDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid apartment deletion data");
+            }
+
+            var cancelled = _repository.Butas.Delete(apartmentDeleteDto);
+            if (!cancelled)
+            {
+                return BadRequest("Apartment could not be cancelled");
+            }
+
+            return Ok();
+        }
+
+
+        /// <summary>
+        /// Saves apartment in the db
+        /// </summary>
+        /// <param name="apartmentCreateDto">Apartnebt data</param>
+        /// <returns>Apartment data if saved succesfully, badrequest error if not</returns>
+        [HttpPost("addApartment")]
+        public ActionResult<ApartmentDto> AddApartment([FromBody] ApartmentCreateDto apartmentCreateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid apartment data");
+            }
+            var savedButas = _repository.Butas.Add(apartmentCreateDto);
+            if (savedButas == null)
+            {
+                return BadRequest("Apartment could not be saved");
+            }
+
+            return Ok(_mapper.Map<Butas, ApartmentDto>(savedButas));
+        }
+        /// <summary>
+        /// Saves apartment in the db
+        /// </summary>
+        /// <param name="apartmentCreateDto">Apartnebt data</param>
+        /// <returns>Apartment data if saved succesfully, badrequest error if not</returns>
+        [HttpPost("updateApartment")]
+        public ActionResult<ApartmentDto> UpdateApartment([FromBody] ApartmentUpdateDto apartmentUpdateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid apartment data");
+            }
+            _repository.Butas.Update(apartmentUpdateDto);
+
+
+            return Ok();
+        }
+        /// <summary>
+        /// Can search apartments by owner id or renter id
+        /// </summary>
+        /// <param name="searchDto">Search options</param>
+        /// <returns>Found apartments</returns>
+        [HttpPost("searchComplaints")]
+        public ActionResult<IEnumerable<ApartmentDto>> SearchComplaints([FromBody] ApartmentsSearchDto searchDto)
+        {
+            if (searchDto.OwnerId == null && searchDto.TenantId == null)
+            {
+                return BadRequest("No search options");
+            }
+
+            var apartments = _repository.Skundas.Search(searchDto);
+            if (!apartments.Any())
+            {
+                return NotFound("No apartments found");
+            }
+
+            return Ok(apartments);
+        }
     }
+    
 }
