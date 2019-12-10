@@ -228,7 +228,7 @@ namespace Apartments_API.Repository
                     .HasColumnType("decimal(10,0)")
                     .HasDefaultValueSql("'NULL'");
 
-                entity.HasOne(d => d.BusenaNavigation)
+                entity.HasOne(d => d.DarboBusena)
                     .WithMany(p => p.Darbas)
                     .HasForeignKey(d => d.Busena)
                     .HasConstraintName("darbas_ibfk_1");
