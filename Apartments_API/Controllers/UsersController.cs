@@ -99,5 +99,26 @@ namespace Apartments_API.Controllers
 
             return Ok();
         }
+
+        /// <summary>
+        /// Changes user's profile information
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut("update")]
+        public ActionResult<UserDto> Update([FromBody] UserUpdateDto userUpdateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Profile data not valid");
+            }
+
+            var updatedUser = _repository.IsNaudotojas.Update(userUpdateDto);
+            if (updatedUser == null)
+            {
+                return BadRequest("Profile could not be saved");
+            }
+
+            return Ok(_mapper.Map<IsNaudotojas, UserDto>(updatedUser));
+        }
     }
 }
