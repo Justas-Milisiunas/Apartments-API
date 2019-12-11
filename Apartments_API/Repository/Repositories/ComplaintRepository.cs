@@ -33,17 +33,6 @@ namespace Apartments_API.Repository.Repositories
                 .Include(o => o.FkButasidButasNavigation)
                 .AsNoTracking().AsEnumerable();
 
-           /* var apartments = _repository.Set<Butas>()
-                .Include(o => o.BusenaNavigation)
-                .Include(o => o.FkSavininkasidIsNaudotojasNavigation)
-                .Include(o => o.FkSavininkasidIsNaudotojasNavigation.IdIsNaudotojasNavigation)
-                .Include(o => o.Darbas)
-                .Include(o => o.NuomosLaikotarpis)
-                .Include(o => o.Privalumas)
-                .Include(o => o.Reitingas)
-                .Include(o => o.Skundas)
-                .AsNoTracking().AsEnumerable();
-            */
             var foundComplaints = new List<Skundas>();
             foreach (var complaint in complaints)
             {

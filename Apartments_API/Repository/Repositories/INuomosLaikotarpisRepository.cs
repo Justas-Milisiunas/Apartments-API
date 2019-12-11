@@ -1,5 +1,6 @@
 using Apartments_API.DTO;
 using Apartments_API.Models;
+using System.Collections.Generic;
 
 namespace Apartments_API.Repository.Repositories
 {
@@ -18,5 +19,6 @@ namespace Apartments_API.Repository.Repositories
         /// <param name="cancelDto">Cancel data</param>
         /// <returns>true if removed successfully, false if not</returns>
         bool CancelReservation(BookingCancelDto cancelDto);
+        IEnumerable<NuomosLaikotarpis> Search(ReportDto searchDto, int idButas);
     }
 }

@@ -22,5 +22,6 @@ namespace Apartments_API.Repository.Repositories
         Butas Add(ApartmentCreateDto apartmentCreateDto);
         void Update(ApartmentUpdateDto apartmentCreateDto);
         bool Delete(ApartmentDeleteDto apartmentCreateDto);
+        IEnumerable<Butas> Search(ReportDto searchDto);
     }
 }

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Apartments_API.DTO;
 using Apartments_API.Models;
 using Apartments_API.Repository;
@@ -238,10 +240,64 @@ namespace Apartments_API.Controllers
             var apartments = _repository.Skundas.Search(searchDto);
             if (!apartments.Any())
             {
-                return NotFound("No apartments found");
+                return NotFound("No complaints found");
             }
 
             return Ok(apartments);
+        }
+        // GET: api/apartment/report
+        [HttpGet("report")]
+        public IActionResult GenerateReport([FromBody] ReportDto reportData) // [FromBody] ReportDto reportData
+        {
+            var apartments = _repository.Butas.Search(reportData);
+            //var mappedJobs = new List<RentIntervalDto>();
+
+            //foreach (var job in bookings)
+            //    mappedJobs.Add(_mapper.Map<NuomosLaikotarpis, RentIntervalDto>(job));
+
+            var userData = _repository.IsNaudotojas
+                .FindByCondition(o => o.IdIsNaudotojas == reportData.UserID)
+                .FirstOrDefault();
+
+            var userName = userData.Vardas;
+            var userSurname = userData.Pavarde;
+
+            decimal totalMoneyEarned = 0;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendFormat("{0};{1}\n", userName, userSurname);
+            sb.AppendLine("Data nuo;Data iki;");
+            sb.AppendFormat("{0};{1};\n", reportData.From, reportData.To);
+            sb.AppendLine("Apartment;Date of creation;Date of completion;Payment");
+
+            foreach (var apartment in apartments)
+            {
+                decimal moneyEarned = 0;
+                var bookings = _repository.NuomosLaikotarpis.Search(reportData, apartment.IdButas);
+                var apartmentName = apartment.Pavadinimas;
+
+                foreach (var book in bookings)
+                {
+                    if (book.Nuo != null && book.Iki != null)
+                    {
+                        int dateStartComparison = DateTime.Compare(reportData.From, (DateTime)book.Nuo);
+                        int dateEndComparison = DateTime.Compare(reportData.To, (DateTime)book.Iki);
+                        if (dateStartComparison <= 0 && dateEndComparison >= 0)
+                        {
+                            int days = (int) ((DateTime)book.Iki - (DateTime)book.Nuo).TotalDays;
+                            moneyEarned += (decimal) (days * apartment.KainaUzNakti);
+                        }
+                    }
+                }
+                sb.AppendFormat("{0};{1};{2};{3}\n", apartmentName, reportData.From, reportData.To,
+                                moneyEarned);
+                totalMoneyEarned += moneyEarned;
+            }
+
+
+
+            sb.AppendFormat("{0};{1};{2};{3}\n", "", "", "Total Profit:", totalMoneyEarned);
+            return File(Encoding.ASCII.GetBytes(sb.ToString()), "text/csv", "data.csv");
         }
     }
     

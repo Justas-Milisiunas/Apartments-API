@@ -82,6 +82,32 @@ namespace Apartments_API.Repository.Repositories
 
             return foundApartments;
         }
+        public IEnumerable<Butas> Search(ReportDto searchDto)
+        {
+            // TODO: add null check to new search options
+            var apartments = _repository.Set<Butas>()
+                .Include(o => o.BusenaNavigation)
+                .Include(o => o.FkSavininkasidIsNaudotojasNavigation)
+                .Include(o => o.FkSavininkasidIsNaudotojasNavigation.IdIsNaudotojasNavigation)
+                .Include(o => o.Darbas)
+                .Include(o => o.NuomosLaikotarpis)
+                .Include(o => o.Privalumas)
+                .Include(o => o.Reitingas)
+                .Include(o => o.Skundas)
+                .AsNoTracking().AsEnumerable();
+
+            var foundApartments = new List<Butas>();
+            foreach (var apartment in apartments)
+            {
+                
+                if (searchDto.UserID != null && apartment.FkSavininkasidIsNaudotojas == searchDto.UserID)
+                {
+                    foundApartments.Add(apartment);
+                }
+            }
+
+            return foundApartments;
+        }
 
         public Reitingas Rate(RatingDto ratingDto)
         {
