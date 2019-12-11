@@ -107,17 +107,17 @@ namespace Apartments_API.Controllers
         }
 
         // GET: api/jobs/report
-        [HttpGet("report")]
-        public IActionResult GenerateReport([FromBody] ReportDto reportData) // [FromBody] ReportDto reportData
+        [HttpGet("report/{from}/{to}/{userid}")]
+        public IActionResult GenerateReport(DateTime from, DateTime to, int userid) // [FromBody] ReportDto reportData
         {
-            var jobs = _repository.Job.FindDataToReport(reportData.UserID);
+            var jobs = _repository.Job.FindDataToReport(userid);
             var mappedJobs = new List<JobDto>();
             
             foreach (var job in jobs)
                 mappedJobs.Add(_mapper.Map<Darbas, JobDto>(job));
             
             var userData = _repository.IsNaudotojas
-                .FindByCondition(o => o.IdIsNaudotojas == reportData.UserID)
+                .FindByCondition(o => o.IdIsNaudotojas == userid)
                 .FirstOrDefault();
             
             var userName = userData.Vardas;
@@ -128,15 +128,15 @@ namespace Apartments_API.Controllers
 
             sb.AppendFormat("{0};{1}\n", userName, userSurname);
             sb.AppendLine("Data nuo;Data iki;");
-            sb.AppendFormat("{0};{1};\n", reportData.From, reportData.To);
+            sb.AppendFormat("{0};{1};\n", from, to);
             sb.AppendLine("Apartment;Date of creation;Date of completion;Payment");
             
             foreach (var job in mappedJobs)
             {
                 if (job.SukurimoData != null && job.IvykdymoData != null)
                 {
-                    int dateStartComparison = DateTime.Compare(reportData.From, (DateTime) job.SukurimoData);
-                    int dateEndComparison = DateTime.Compare(reportData.To, (DateTime) job.IvykdymoData);
+                    int dateStartComparison = DateTime.Compare(from, (DateTime) job.SukurimoData);
+                    int dateEndComparison = DateTime.Compare(to, (DateTime) job.IvykdymoData);
                     if (dateStartComparison <= 0 && dateEndComparison >= 0)
                     {
                         var apartmentName = job.Butas.Pavadinimas;

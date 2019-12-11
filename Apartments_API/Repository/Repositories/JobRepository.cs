@@ -21,6 +21,7 @@ namespace Apartments_API.Repository.Repositories
         {
             return _context.Set<Darbas>()
                 .Include(o => o.DarboBusena)
+                .Include(o => o.FkButasidButasNavigation)
                 .AsNoTracking();
         }
 
@@ -55,18 +56,21 @@ namespace Apartments_API.Repository.Repositories
 
             _context.SaveChanges();
 
-            return job.Include(o => o.DarboBusena).AsNoTracking();
+            return job.Include(o => o.DarboBusena).Include(o => o.FkButasidButasNavigation).AsNoTracking();
         }
 
         public IEnumerable<Darbas> MakeJobAsDone(JobAcceptDto entity)
         {
             var job = _context.Set<Darbas>().Where(darbas => darbas.IdDarbas.Equals(entity.JobID));
+            var user = _context.Set<IsNaudotojas>().Where(user => user.IdIsNaudotojas.Equals(entity.IsUserID));
             var tempJob = job.FirstOrDefault();
+            var tempUser = user.FirstOrDefault();
 
             if (tempJob.Busena == 2)
             {
                 tempJob.Busena = 1; // Change work state to - atliktas
                 tempJob.FkValytojasidIsNaudotojas = entity.IsUserID;
+                tempUser.Balansas += tempJob.Uzmokestis;
 
                 tempJob.IvykdymoData = DateTime.Now;
                 _context.SaveChanges();
@@ -96,7 +100,9 @@ namespace Apartments_API.Repository.Repositories
         public IEnumerable<Darbas> FindHistory(int id)
         {
             return _context.Set<Darbas>()
-                .Where(o => o.FkValytojasidIsNaudotojas == id)
+                .Where(o => o.FkValytojasidIsNaudotojas == id && o.Busena == 1)
+                .Include(o => o.DarboBusena)
+                .Include(o => o.FkButasidButasNavigation)
                 .AsNoTracking();
         }
 
