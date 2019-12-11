@@ -71,6 +71,30 @@ namespace Apartments_API.Repository.Repositories
             return user;
         }
 
+        public IsNaudotojas Update(UserUpdateDto userUpdateDto)
+        {
+            var foundUser = _repository
+                .Set<IsNaudotojas>()
+                .FirstOrDefault(o => o.IdIsNaudotojas.Equals(userUpdateDto.IdIsNaudotojas) && o.Slaptazodis.Equals(userUpdateDto.Slaptazodis));
+
+            if (foundUser == null)
+            {
+                return null;
+            }
+
+            foundUser.Vardas = userUpdateDto.Vardas;
+            foundUser.Pavarde = userUpdateDto.Pavarde;
+            foundUser.ElPastas = userUpdateDto.ElPastas;
+            
+            if (!string.IsNullOrEmpty(userUpdateDto.NaujasSlaptazodis))
+            {
+                foundUser.Slaptazodis = userUpdateDto.NaujasSlaptazodis;
+            }
+
+            _repository.SaveChanges();
+            return foundUser;
+        }
+
         public bool Delete(int id)
         {
             var userExists = _repository.Set<IsNaudotojas>().Where(o => o.IdIsNaudotojas.Equals(id)).Any();

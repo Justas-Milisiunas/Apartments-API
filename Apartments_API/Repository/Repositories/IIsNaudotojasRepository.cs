@@ -12,5 +12,12 @@ namespace Apartments_API.Repository.Repositories
         /// <param name="entity">New user's data</param>
         /// <returns>Saved user data</returns>
         IsNaudotojas Create(UserCreateDto entity);
+
+        /// <summary>
+        /// Updates user's profile information
+        /// </summary>
+        /// <param name="userUpdateDto">Updated user profile information</param>
+        /// <returns>Saved profile date</returns>
+        IsNaudotojas Update(UserUpdateDto userUpdateDto);
     }
 }
