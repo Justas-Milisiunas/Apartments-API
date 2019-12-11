@@ -47,17 +47,17 @@ namespace Apartments_API.Repository.Repositories
             var role = entity.Role;
             switch (role)
             {
-                // Tenant
-                case 0:
-                    var tenant = new Nuomininkas();
-                    tenant.IdIsNaudotojas = user.IdIsNaudotojas;
-                    _repository.Set<Nuomininkas>().Add(tenant);
-                    break;
                 // Owner
-                case 1:
+                case 0:
                     var owner = new Savininkas();
                     owner.IdIsNaudotojas = user.IdIsNaudotojas;
                     _repository.Set<Savininkas>().Add(owner);
+                    break;
+                // Tenant
+                case 1:
+                    var tenant = new Nuomininkas();
+                    tenant.IdIsNaudotojas = user.IdIsNaudotojas;
+                    _repository.Set<Nuomininkas>().Add(tenant);
                     break;
                 // Worker
                 case 2:
@@ -71,12 +71,47 @@ namespace Apartments_API.Repository.Repositories
             return user;
         }
 
-        public void Update(IsNaudotojas entity)
+        public IsNaudotojas Update(UserUpdateDto userUpdateDto)
         {
-            throw new NotImplementedException();
+            var foundUser = _repository
+                .Set<IsNaudotojas>()
+                .FirstOrDefault(o => o.IdIsNaudotojas.Equals(userUpdateDto.IdIsNaudotojas) && o.Slaptazodis.Equals(userUpdateDto.Slaptazodis));
+
+            if (foundUser == null)
+            {
+                return null;
+            }
+
+            foundUser.Vardas = userUpdateDto.Vardas;
+            foundUser.Pavarde = userUpdateDto.Pavarde;
+            foundUser.ElPastas = userUpdateDto.ElPastas;
+            
+            if (!string.IsNullOrEmpty(userUpdateDto.NaujasSlaptazodis))
+            {
+                foundUser.Slaptazodis = userUpdateDto.NaujasSlaptazodis;
+            }
+
+            _repository.SaveChanges();
+            return foundUser;
         }
 
-        public void Delete(IsNaudotojas entity)
+        public bool Delete(int id)
+        {
+            var userExists = _repository.Set<IsNaudotojas>().Where(o => o.IdIsNaudotojas.Equals(id)).Any();
+            if (!userExists)
+            {
+                return false;
+            }
+            _repository.Set<IsNaudotojas>().Remove(new IsNaudotojas
+            {
+                IdIsNaudotojas = id
+            });
+            _repository.SaveChanges();
+
+            return true;
+        }
+        
+        public void Update(IsNaudotojas entity)
         {
             throw new NotImplementedException();
         }
