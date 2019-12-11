@@ -155,10 +155,10 @@ namespace Apartments_API.Repository.Repositories
 
             apartment.First().KainaUzNakti = apartmentUpdateDto.KainaUzNakti;
             apartment.First().NuotraukaUrl = apartmentUpdateDto.NuotraukaUrl;
-            apartment.First().Aprašas = apartmentUpdateDto.Aprašas;
+            apartment.First().ApraÅ¡as = apartmentUpdateDto.ApraÅ¡as;
             apartment.First().Pavadinimas = apartmentUpdateDto.Pavadinimas;
             apartment.First().Miestas = apartmentUpdateDto.Miestas;
-            apartment.First().Šalis = apartmentUpdateDto.Šalis;
+            apartment.First().Å alis = apartmentUpdateDto.Å alis;
             _repository.Set<Butas>().Update(apartment.First());
             _repository.SaveChanges();
 
