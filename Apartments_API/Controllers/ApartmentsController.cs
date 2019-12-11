@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Apartments_API.DTO;
 using Apartments_API.Models;
 using Apartments_API.Repository;
@@ -143,7 +145,7 @@ namespace Apartments_API.Controllers
 
             return Ok();
         }
-
+ 
         /// <summary>
         /// Saves rating data
         /// </summary>
@@ -160,5 +162,143 @@ namespace Apartments_API.Controllers
             var savedRating = _repository.Butas.Rate(ratingDto);
             return Ok(_mapper.Map<Reitingas, RatingDto>(savedRating));
         }
+
+
+        /// <summary>
+        /// Delete apartment
+        /// </summary>
+        /// <param name="apartmentDeleteDto">Cancellation data</param>
+        /// <returns>Ok if cancelled, error response if not</returns>
+        [HttpPost("deleteApartment")]
+        public IActionResult DeleteApartment([FromBody] ApartmentDeleteDto apartmentDeleteDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid apartment deletion data");
+            }
+
+            var cancelled = _repository.Butas.Delete(apartmentDeleteDto);
+            if (!cancelled)
+            {
+                return BadRequest("Apartment could not be cancelled");
+            }
+
+            return Ok();
+        }
+
+
+        /// <summary>
+        /// Saves apartment in the db
+        /// </summary>
+        /// <param name="apartmentCreateDto">Apartnebt data</param>
+        /// <returns>Apartment data if saved succesfully, badrequest error if not</returns>
+        [HttpPost("addApartment")]
+        public ActionResult<ApartmentDto> AddApartment([FromBody] ApartmentCreateDto apartmentCreateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid apartment data");
+            }
+            var savedButas = _repository.Butas.Add(apartmentCreateDto);
+            if (savedButas == null)
+            {
+                return BadRequest("Apartment could not be saved");
+            }
+
+            return Ok(_mapper.Map<Butas, ApartmentDto>(savedButas));
+        }
+        /// <summary>
+        /// Saves apartment in the db
+        /// </summary>
+        /// <param name="apartmentCreateDto">Apartnebt data</param>
+        /// <returns>Apartment data if saved succesfully, badrequest error if not</returns>
+        [HttpPost("updateApartment")]
+        public ActionResult<ApartmentDto> UpdateApartment([FromBody] ApartmentUpdateDto apartmentUpdateDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid apartment data");
+            }
+            _repository.Butas.Update(apartmentUpdateDto);
+
+
+            return Ok();
+        }
+        /// <summary>
+        /// Can search apartments by owner id or renter id
+        /// </summary>
+        /// <param name="searchDto">Search options</param>
+        /// <returns>Found apartments</returns>
+        [HttpPost("searchComplaints")]
+        public ActionResult<IEnumerable<ApartmentDto>> SearchComplaints([FromBody] ApartmentsSearchDto searchDto)
+        {
+            if (searchDto.OwnerId == null && searchDto.TenantId == null)
+            {
+                return BadRequest("No search options");
+            }
+
+            var apartments = _repository.Skundas.Search(searchDto);
+            if (!apartments.Any())
+            {
+                return NotFound("No complaints found");
+            }
+
+            return Ok(apartments);
+        }
+        // GET: api/apartment/report
+        [HttpGet("report")]
+        public IActionResult GenerateReport([FromBody] ReportDto reportData) // [FromBody] ReportDto reportData
+        {
+            var apartments = _repository.Butas.Search(reportData);
+            //var mappedJobs = new List<RentIntervalDto>();
+
+            //foreach (var job in bookings)
+            //    mappedJobs.Add(_mapper.Map<NuomosLaikotarpis, RentIntervalDto>(job));
+
+            var userData = _repository.IsNaudotojas
+                .FindByCondition(o => o.IdIsNaudotojas == reportData.UserID)
+                .FirstOrDefault();
+
+            var userName = userData.Vardas;
+            var userSurname = userData.Pavarde;
+
+            decimal totalMoneyEarned = 0;
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendFormat("{0};{1}\n", userName, userSurname);
+            sb.AppendLine("Data nuo;Data iki;");
+            sb.AppendFormat("{0};{1};\n", reportData.From, reportData.To);
+            sb.AppendLine("Apartment;Date of creation;Date of completion;Payment");
+
+            foreach (var apartment in apartments)
+            {
+                decimal moneyEarned = 0;
+                var bookings = _repository.NuomosLaikotarpis.Search(reportData, apartment.IdButas);
+                var apartmentName = apartment.Pavadinimas;
+
+                foreach (var book in bookings)
+                {
+                    if (book.Nuo != null && book.Iki != null)
+                    {
+                        int dateStartComparison = DateTime.Compare(reportData.From, (DateTime)book.Nuo);
+                        int dateEndComparison = DateTime.Compare(reportData.To, (DateTime)book.Iki);
+                        if (dateStartComparison <= 0 && dateEndComparison >= 0)
+                        {
+                            int days = (int) ((DateTime)book.Iki - (DateTime)book.Nuo).TotalDays;
+                            moneyEarned += (decimal) (days * apartment.KainaUzNakti);
+                        }
+                    }
+                }
+                sb.AppendFormat("{0};{1};{2};{3}\n", apartmentName, reportData.From, reportData.To,
+                                moneyEarned);
+                totalMoneyEarned += moneyEarned;
+            }
+
+
+
+            sb.AppendFormat("{0};{1};{2};{3}\n", "", "", "Total Profit:", totalMoneyEarned);
+            return File(Encoding.ASCII.GetBytes(sb.ToString()), "text/csv", "data.csv");
+        }
     }
+    
 }

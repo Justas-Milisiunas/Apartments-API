@@ -75,5 +75,24 @@ namespace Apartments_API.Repository.Repositories
 
             return true;
         }
+        public IEnumerable<NuomosLaikotarpis> Search(ReportDto searchDto, int butasId)
+        {
+            // TODO: add null check to new search options
+            var bookings = _repository.Set<NuomosLaikotarpis>()
+                .Include(o => o.FkButasidButasNavigation)
+                .AsNoTracking().AsEnumerable();
+
+            var foundbookings = new List<NuomosLaikotarpis>();
+            foreach (var booking in bookings)
+            {
+                if ((searchDto.UserID != null && booking.FkButasidButasNavigation.FkSavininkasidIsNaudotojas == searchDto.UserID && booking.Busena == 1
+                    && booking.FkButasidButas == butasId))
+                {
+                    foundbookings.Add(booking);
+                }
+            }
+
+            return foundbookings;
+        }
     }
 }
