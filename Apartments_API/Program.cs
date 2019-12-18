@@ -21,7 +21,7 @@ namespace Apartments_API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
-                        .UseUrls("https://0.0.0.0:5001;http://0.0.0.0:5000")
+                        .UseUrls("https://0.0.0.0:8081;http://0.0.0.0:8080")
                         .UseStartup<Startup>();
                 });
     }

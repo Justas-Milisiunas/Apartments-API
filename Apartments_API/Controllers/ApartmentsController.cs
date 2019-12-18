@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Security.Cryptography;
 using System.Text;
 using Apartments_API.DTO;
 using Apartments_API.Models;
 using Apartments_API.Repository;
 using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Apartments_API.Controllers
@@ -16,12 +21,14 @@ namespace Apartments_API.Controllers
     {
         private readonly IRepositoryWrapper _repository;
         private readonly IMapper _mapper;
+        private readonly IHostingEnvironment hostingEnvironment;
 
         public ApartmentsController(IRepositoryWrapper repositoryWrapper,
-            IMapper mapper)
+            IMapper mapper, IHostingEnvironment environment)
         {
             _repository = repositoryWrapper;
             _mapper = mapper;
+            hostingEnvironment = environment;
         }
 
         /// <summary>
@@ -31,6 +38,7 @@ namespace Apartments_API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<ApartmentDto>> GetAllApartments()
         {
+
             var apartments = _repository.Butas.FindAll();
             var mappedApartments = new List<ApartmentDto>();
             foreach (var apartment in apartments)
@@ -145,7 +153,7 @@ namespace Apartments_API.Controllers
 
             return Ok();
         }
- 
+
         /// <summary>
         /// Saves rating data
         /// </summary>
@@ -186,7 +194,7 @@ namespace Apartments_API.Controllers
             return Ok();
         }
 
-
+ 
         /// <summary>
         /// Saves apartment in the db
         /// </summary>
@@ -199,13 +207,38 @@ namespace Apartments_API.Controllers
             {
                 return BadRequest("Invalid apartment data");
             }
+            else
+            {
+                if (apartmentCreateDto.Nuotrauka != null)
+                {
+                    var uniqueFileName = GetUniqueFileName(apartmentCreateDto.Nuotrauka.FileName);
+                    var uploads = Path.Combine(hostingEnvironment.WebRootPath, "Data/Photos");
+                    var filePath = Path.Combine(uploads, uniqueFileName);
+                    apartmentCreateDto.Nuotrauka.CopyTo(new FileStream(filePath, FileMode.Create));
+                    apartmentCreateDto.NuotraukaUrl = uniqueFileName;
+
+                }
+                else
+                {
+                    apartmentCreateDto.NuotraukaUrl = "default.jpg";
+                }
+            }
             var savedButas = _repository.Butas.Add(apartmentCreateDto);
+
             if (savedButas == null)
             {
                 return BadRequest("Apartment could not be saved");
             }
-
+            
             return Ok(_mapper.Map<Butas, ApartmentDto>(savedButas));
+        }
+        private string GetUniqueFileName(string fileName)
+        {
+            fileName = Path.GetFileName(fileName);
+            return Path.GetFileNameWithoutExtension(fileName)
+                      + "_"
+                      + Guid.NewGuid().ToString().Substring(0, 4)
+                      + Path.GetExtension(fileName);
         }
         /// <summary>
         /// Saves apartment in the db
@@ -246,7 +279,7 @@ namespace Apartments_API.Controllers
             return Ok(apartments);
         }
         // GET: api/apartment/report
-        [HttpGet("report")]
+        [HttpPost("report")]
         public IActionResult GenerateReport([FromBody] ReportDto reportData) // [FromBody] ReportDto reportData
         {
             var apartments = _repository.Butas.Search(reportData);
@@ -258,7 +291,7 @@ namespace Apartments_API.Controllers
             var userData = _repository.IsNaudotojas
                 .FindByCondition(o => o.IdIsNaudotojas == reportData.UserID)
                 .FirstOrDefault();
-
+            var email = reportData.Email;
             var userName = userData.Vardas;
             var userSurname = userData.Pavarde;
 
@@ -284,8 +317,8 @@ namespace Apartments_API.Controllers
                         int dateEndComparison = DateTime.Compare(reportData.To, (DateTime)book.Iki);
                         if (dateStartComparison <= 0 && dateEndComparison >= 0)
                         {
-                            int days = (int) ((DateTime)book.Iki - (DateTime)book.Nuo).TotalDays;
-                            moneyEarned += (decimal) (days * apartment.KainaUzNakti);
+                            int days = (int)((DateTime)book.Iki - (DateTime)book.Nuo).TotalDays;
+                            moneyEarned += (decimal)(days * apartment.KainaUzNakti);
                         }
                     }
                 }
@@ -297,8 +330,47 @@ namespace Apartments_API.Controllers
 
 
             sb.AppendFormat("{0};{1};{2};{3}\n", "", "", "Total Profit:", totalMoneyEarned);
-            return File(Encoding.ASCII.GetBytes(sb.ToString()), "text/csv", "data.csv");
+
+            if (email)
+            {
+                //var pass = "qUT12i^8$AWH";
+                var fromAddress = new MailAddress("testinistestas57@gmail.com", "From Name");
+                var toAddress = new MailAddress("testinistestas57@gmail.com", "To Name");
+                const string fromPassword = "qUT12i^8$AWH";
+                const string subject = "Apartments report";
+                const string body = "Check the attachments to see your report!";
+                var file = File(Encoding.ASCII.GetBytes(sb.ToString()), "text / csv", "data.csv");
+                Stream stream = new MemoryStream(Encoding.ASCII.GetBytes(sb.ToString()));
+                Attachment data = new Attachment(stream, "text.csv");
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+                };
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body
+
+
+                })
+                      
+                    
+                {
+                    message.Attachments.Add(data);
+                    smtp.Send(message);
+                    return Ok();
+                }
+            }
+            else
+            {
+                return File(Encoding.ASCII.GetBytes(sb.ToString()), "text/csv", "data.csv");
+            }
         }
+
     }
-    
 }

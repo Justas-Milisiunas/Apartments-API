@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using Apartments_API.DTO;
@@ -134,10 +135,21 @@ namespace Apartments_API.Repository.Repositories
            
 
             var apartment = _repository.Mapper.Map<ApartmentCreateDto,Butas> (apartmentCreateDto);
+             //to do : Save uniqueFileName  to your db table   
+            
             _repository.Set<Butas>().Add(apartment);
             _repository.SaveChanges();
 
             return apartment;
+        }
+
+        private string GetUniqueFileName(string fileName)
+        {
+            fileName = Path.GetFileName(fileName);
+            return Path.GetFileNameWithoutExtension(fileName)
+                      + "_"
+                      + Guid.NewGuid().ToString().Substring(0, 4)
+                      + Path.GetExtension(fileName);
         }
         public void Update(ApartmentUpdateDto apartmentUpdateDto)
         {
@@ -177,7 +189,20 @@ namespace Apartments_API.Repository.Repositories
                 {
                     return false;
                 }
-                _repository.Set<Butas>().Remove(apartment.First());
+            var rent = _repository.Set<NuomosLaikotarpis>()
+            .Include(o => o.FkNuomininkasidIsNaudotojasNavigation)
+            .Where(o => o.FkButasidButas.Equals(apartmentDeleteDto.IdButas));
+
+            if (!rent.Any())
+            {
+                return false;
+            }
+
+            _repository.Set<NuomosLaikotarpis>().Remove(rent.First());
+            _repository.SaveChanges();
+
+
+            _repository.Set<Butas>().Remove(apartment.First());
                 _repository.SaveChanges();
 
                 return true;

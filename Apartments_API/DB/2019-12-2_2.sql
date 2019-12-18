@@ -31,7 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `butas` (
   `dydis` int(11) DEFAULT 0,
   `kambaru_skaicius` int(11) DEFAULT 0,
-  `pridejimo_data` date DEFAULT current_timestamp(),
+  `pridejimo_data` date,
   `kaina_uz_nakti` decimal(10,0) DEFAULT 0,
   `adresas` varchar(255) COLLATE utf8_lithuanian_ci DEFAULT NULL,
   `nuotraukaURL` varchar(255) COLLATE utf8_lithuanian_ci DEFAULT 'default.png',
@@ -137,8 +137,8 @@ CREATE TABLE `is_naudotojas` (
   `vardas` varchar(255) COLLATE utf8_lithuanian_ci DEFAULT NULL,
   `el_pastas` varchar(255) COLLATE utf8_lithuanian_ci DEFAULT NULL,
   `pavarde` varchar(255) COLLATE utf8_lithuanian_ci DEFAULT NULL,
-  `paskutinis_prisijungimas` date DEFAULT current_timestamp(),
-  `registracijos_data` date DEFAULT current_timestamp(),
+  `paskutinis_prisijungimas` date,
+  `registracijos_data` date,
   `slaptazodis` varchar(255) COLLATE utf8_lithuanian_ci DEFAULT NULL,
   `balansas` decimal(10,5) DEFAULT 0.00000,
   `id_is_naudotojas` int(11) NOT NULL

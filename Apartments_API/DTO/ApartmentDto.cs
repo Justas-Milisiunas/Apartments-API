@@ -13,7 +13,8 @@ namespace Apartments_API.DTO
         public decimal? KainaUzNakti { get; set; }
         public string Adresas { get; set; }
         public string Nuotrauka { get; set; }
-        public string NuotraukaUrl => "http://10.0.2.2:5000/api/photos/" + Nuotrauka;
+        public string NuotraukaUrl => "htt" +
+            "p://10.0.2.2:5000/api/photos/" + Nuotrauka;
         public string Aprašas { get; set; }
         public string Pavadinimas { get; set; }
         public string Miestas { get; set; }

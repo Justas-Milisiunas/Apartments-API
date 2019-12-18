@@ -75,6 +75,22 @@ namespace Apartments_API.Repository.Repositories
 
             return true;
         }
+        public bool DeleteApart(int idButas )
+        {
+            var rent = _repository.Set<NuomosLaikotarpis>()
+                .Include(o => o.FkNuomininkasidIsNaudotojasNavigation)
+                .Where(o => o.FkButasidButas.Equals(idButas));
+
+            if (!rent.Any())
+            {
+                return false;
+            }
+
+            _repository.Set<NuomosLaikotarpis>().Remove(rent.First());
+            _repository.SaveChanges();
+
+            return true;
+        }
         public IEnumerable<NuomosLaikotarpis> Search(ReportDto searchDto, int butasId)
         {
             // TODO: add null check to new search options

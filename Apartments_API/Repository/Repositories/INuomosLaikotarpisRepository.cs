@@ -20,5 +20,7 @@ namespace Apartments_API.Repository.Repositories
         /// <returns>true if removed successfully, false if not</returns>
         bool CancelReservation(BookingCancelDto cancelDto);
         IEnumerable<NuomosLaikotarpis> Search(ReportDto searchDto, int idButas);
+        public bool DeleteApart(int idButas);
+
     }
 }
